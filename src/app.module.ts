@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { WartModule } from './wart/wart.module';
 import { WartEntity } from './wart/entities/wart.entity';
 import { RedisModule } from '@nestjs-modules/ioredis';
@@ -10,9 +10,14 @@ import { RedisModule } from '@nestjs-modules/ioredis';
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
-    RedisModule.forRoot({
-      type: 'single',
-      url: process.env.REDIS_URL,
+    RedisModule.forRootAsync({
+      // type: 'single',
+      // url: process.env.REDIS_URL,
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => ({
+        type: 'single',
+        url: configService.get<string>('REDIS_URL'),
+      }),
     }),
     TypeOrmModule.forRoot({
       type: 'postgres',
