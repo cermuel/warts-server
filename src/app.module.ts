@@ -9,11 +9,11 @@ import { RedisModule } from '@nestjs-modules/ioredis';
 
 @Module({
   imports: [
+    ConfigModule.forRoot({ isGlobal: true }),
     RedisModule.forRoot({
       type: 'single',
       url: process.env.REDIS_URL,
     }),
-    ConfigModule.forRoot({ isGlobal: true }),
     TypeOrmModule.forRoot({
       type: 'postgres',
       url: process.env.DATABASE_URL,
